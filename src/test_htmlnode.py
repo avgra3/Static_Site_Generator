@@ -96,6 +96,25 @@ class TestParentNode(unittest.TestCase):
         expected3 = "<a href=\"https://boot.dev\">We have no tag!</a>"
         self.assertEqual(node3.to_html(), expected3)
 
+    def test_nested_parent_nodes(self):
+        node1 = ParentNode(
+            tag="p",
+            children=[
+                LeafNode(tag="b", value="Bold text"),
+                LeafNode(tag=None, value="Normal text"),
+                LeafNode(tag="i", value="italic text"),
+                LeafNode(tag=None, value="Normal text"),
+            ],
+        )
+        node2 = ParentNode(tag="h3", children=[
+                           LeafNode(tag=None, value="We have no tag")])
+        node3 = ParentNode(tag="a", children=[LeafNode(
+            tag=None, value="We have no tag!")], props={"href": "https://boot.dev"})
+        big_node = ParentNode(tag="h2", children=[node1, node2, node3])
+        big_node_to_html = big_node.to_html()
+        expected = "<h2><p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p><h3>We have no tag</h3><a href=\"https://boot.dev\">We have no tag!</a></h2>"
+        self.assertEqual(big_node_to_html, expected)
+
 
 if __name__ == "__main__":
     unittest.main()

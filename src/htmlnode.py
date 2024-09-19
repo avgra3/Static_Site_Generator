@@ -47,7 +47,7 @@ class LeafNode(HTMLNode):
 class ParentNode(HTMLNode):
     # No value
     # Children must be included
-    def __init__(self, children: list[LeafNode], tag: str = None, props: dict = None):
+    def __init__(self, children: list[HTMLNode], tag: str = None, props: dict = None):
         super().__init__(tag=tag, value=None, children=children, props=props)
 
     def to_html(self):
