@@ -31,11 +31,11 @@ class LeafNode(HTMLNode):
         super().__init__(tag=tag, value=value, props=props, children=None)
 
     def to_html(self):
-        # If no vlaue: raise Value error
-        if not self.value:
+        # If no value: raise Value error
+        if self.value is None:
             raise ValueError("Value cannot be None!")
         # If no tag, should return the value as raw text
-        if not self.tag:
+        if self.tag is None:
             return f"{self.value}"
         # Render an html tag
         props_text = ""
