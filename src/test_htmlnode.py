@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -15,7 +15,7 @@ class TestHTMLNode(unittest.TestCase):
     def test_props_to_html(self):
         props = {"value": "key", "other_value": "other_key"}
         node = HTMLNode(props=props)
-        expected = " value=key other_value=other_key"
+        expected = ' value="key" other_value="other_key"'
         self.assertEqual(node.props_to_html(), expected)
 
         node2 = HTMLNode()
@@ -31,6 +31,30 @@ class TestHTMLNode(unittest.TestCase):
         node = HTMLNode()
         with self.assertRaises(NotImplementedError):
             node.to_html()
+
+
+class TestLeafNode(unittest.TestCase):
+    def test_raises_no_value(self):
+        node = LeafNode(value=None, tag=None, props=None)
+        with self.assertRaises(ValueError):
+            node.to_html()
+
+    def test_to_html(self):
+        # Test No tag
+        node1 = LeafNode(value="Text only!")
+        expected1 = "Text only!"
+        self.assertEqual(node1.to_html(), expected1)
+
+        # Test No props
+        node2 = LeafNode(value="This is a paragraph of text.", tag="p")
+        expected2 = "<p>This is a paragraph of text.</p>"
+        self.assertEqual(node2.to_html(), expected2)
+
+        # Test with props
+        node3 = LeafNode(value="Click me!", tag="a", props={
+                         "href": "https://www.google.com"})
+        expected3 = '<a href="https://www.google.com">Click me!</a>'
+        self.assertEqual(node3.to_html(), expected3)
 
 
 if __name__ == "__main__":
