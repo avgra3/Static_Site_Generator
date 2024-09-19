@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -54,6 +54,46 @@ class TestLeafNode(unittest.TestCase):
         node3 = LeafNode(value="Click me!", tag="a", props={
                          "href": "https://www.google.com"})
         expected3 = '<a href="https://www.google.com">Click me!</a>'
+        self.assertEqual(node3.to_html(), expected3)
+
+
+class TestParentNode(unittest.TestCase):
+    def test_no_tag(self):
+        child_node = LeafNode(value="Click me!", tag="a", props={
+                              "href": "https://google.com"})
+        parent_node = ParentNode(children=[child_node], tag=None, props=None)
+        with self.assertRaises(ValueError):
+            parent_node.to_html()
+
+    def test_no_children(self):
+        parent_node = ParentNode(children=None, tag="p", props=None)
+        with self.assertRaises(ValueError):
+            parent_node.to_html()
+
+    def test_to_hmtl(self):
+        # Multiple LeafNodes, mix of tag and no tag in children
+        node1 = ParentNode(
+            tag="p",
+            children=[
+                LeafNode(tag="b", value="Bold text"),
+                LeafNode(tag=None, value="Normal text"),
+                LeafNode(tag="i", value="italic text"),
+                LeafNode(tag=None, value="Normal text"),
+            ],
+        )
+        expected1 = "<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>"
+        self.assertEqual(node1.to_html(), expected1)
+
+        # One LeafNode with no tags
+        node2 = ParentNode(tag="h3", children=[
+                           LeafNode(tag=None, value="We have no tag")])
+        expected2 = "<h3>We have no tag</h3>"
+        self.assertEqual(node2.to_html(), expected2)
+
+        # Parent node with props
+        node3 = ParentNode(tag="a", children=[LeafNode(
+            tag=None, value="We have no tag!")], props={"href": "https://boot.dev"})
+        expected3 = "<a href=\"https://boot.dev\">We have no tag!</a>"
         self.assertEqual(node3.to_html(), expected3)
 
 
