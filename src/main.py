@@ -1,7 +1,6 @@
-from textnode import TextNode
 import os
 import shutil
-from extractor import generate_page
+from extractor import generate_pages_recursive
 
 
 # Write a recursive function that copies all files from static dir to public dir
@@ -33,13 +32,11 @@ def copy_static(STATIC_BASE_DIR: str, PUBLIC_BASE_DIR: str):
 def main():
     remove_old_static()
     copy_static(STATIC_BASE_DIR="static", PUBLIC_BASE_DIR="public")
-    content = os.listdir("content")
-    for item in content:
-        generate_page(
-            from_path=os.path.join("content", item),
-            template_path="template.html",
-            dest_path=os.path.join("public", item),
-        )
+    generate_pages_recursive(
+        dir_path_content="content",
+        template_path="template.html",
+        dest_dir_path="public",
+    )
 
 
 if __name__ == "__main__":

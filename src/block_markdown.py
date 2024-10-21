@@ -75,7 +75,6 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
             list_children = []
             lines_of_block = block.split("\n")
             for line in lines_of_block:
-                # line[:2].strip()
                 text_nodes = text_to_textnodes(line[2:].strip())
                 inner_children = []
                 for node in text_nodes:
