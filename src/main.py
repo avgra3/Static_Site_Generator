@@ -1,6 +1,7 @@
 import os
 import shutil
 from extractor import generate_pages_recursive
+import sys
 
 
 # Write a recursive function that copies all files from static dir to public dir
@@ -8,9 +9,10 @@ from extractor import generate_pages_recursive
 # 2. Copy all files and subdirectories, nested files, etc.
 # 3. Should log the path of each file copied to see what's happening
 def remove_old_static():
-    if os.path.exists(os.path.join(os.getcwd(), "public")):
-        shutil.rmtree(os.path.join(os.getcwd(), "public"))
-    os.mkdir(os.path.join(os.getcwd(), "public"))
+    buildDir = "docs"
+    if os.path.exists(os.path.join(os.getcwd(), buildDir)):
+        shutil.rmtree(os.path.join(os.getcwd(), buildDir))
+    os.mkdir(os.path.join(os.getcwd(), buildDir))
 
 
 def copy_static(STATIC_BASE_DIR: str, PUBLIC_BASE_DIR: str):
@@ -30,12 +32,19 @@ def copy_static(STATIC_BASE_DIR: str, PUBLIC_BASE_DIR: str):
 
 
 def main():
+    # Get the arguments passed on start
+    basepath = sys.argv[0]
+    if basepath == "":
+        basepath = "/"
+
+    buildDir = "docs"
+
     remove_old_static()
-    copy_static(STATIC_BASE_DIR="static", PUBLIC_BASE_DIR="public")
+    copy_static(STATIC_BASE_DIR="static", PUBLIC_BASE_DIR=buildDir)
     generate_pages_recursive(
         dir_path_content="content",
         template_path="template.html",
-        dest_dir_path="public",
+        dest_dir_path=buildDir,
     )
 
 
