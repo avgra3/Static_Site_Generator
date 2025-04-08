@@ -67,4 +67,5 @@ def generate_pages_recursive(
                 dir_path_content=static,
                 template_path=template_path,
                 dest_dir_path=copied,
+                basepath=basepath,
             )
