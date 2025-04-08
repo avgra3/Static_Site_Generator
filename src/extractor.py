@@ -24,8 +24,8 @@ def generate_page(
     updated_html = (
         template.replace("{{ Title }}", title)
         .replace("{{ Content }}", html)
-        .replace('href="/"', f'href="{basepath}"')
-        .replace('src="/"', f'src="{basepath}"')
+        .replace('href="/', f'href="{basepath}')
+        .replace('src="/', f'src="{basepath}')
     )
     dest_dirs = "".join(dest_path.split("/")[:-1])
     print(f"Dest path: {dest_path}")

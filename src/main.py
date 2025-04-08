@@ -45,6 +45,7 @@ def main():
         dir_path_content="content",
         template_path="template.html",
         dest_dir_path=buildDir,
+        basepath=basepath,
     )
 
 
