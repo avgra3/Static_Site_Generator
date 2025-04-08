@@ -19,18 +19,17 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
         inner_nodes = []
         # Need to raise an error if there is not a closing delimiter
         sections = node.text.split(delimiter)
-        if len(sections) % 2 == 0:
-            raise Exception(f"No closing delimiter \"{delimiter}\" found!")
+        if len(sections) % 2 == 0 and "http" not in node.text:
+            print(f"NODE => {node.text}")
+            raise Exception("No closing delimiter!")
         for i in range(len(sections)):
             if sections[i] == "":
                 # We don't want to add empty text to our nodes
                 continue
             if i % 2 == 0:
-                inner_nodes.append(
-                    TextNode(text=sections[i], text_type=text_type_text))
+                inner_nodes.append(TextNode(text=sections[i], text_type=text_type_text))
             else:
-                inner_nodes.append(
-                    TextNode(text=sections[i], text_type=text_type))
+                inner_nodes.append(TextNode(text=sections[i], text_type=text_type))
         new_nodes.extend(inner_nodes)
     return new_nodes
 
@@ -68,9 +67,11 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
                 raise ValueError("Invalid markdown! Image section not closed!")
             if sections[0] != "":
                 new_nodes.append(
-                    TextNode(text=sections[0], text_type=text_type_text, url=None))
+                    TextNode(text=sections[0], text_type=text_type_text, url=None)
+                )
             new_nodes.append(
-                TextNode(text=alt_text, text_type=text_type_image, url=image_url))
+                TextNode(text=alt_text, text_type=text_type_image, url=image_url)
+            )
             original_text = sections[1]
         if original_text != "":
             new_nodes.append(TextNode(original_text, text_type_text))
@@ -97,9 +98,15 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
                 raise ValueError("Invalid markdown! Link section not closed!")
             if sections[0] != "":
                 new_nodes.append(
-                    TextNode(text=sections[0], text_type=text_type_text, url=None))
+                    TextNode(
+                        text=sections[0],
+                        text_type=text_type_text,
+                        url=None,
+                    )
+                )
             new_nodes.append(
-                TextNode(text=alt_text, text_type=text_type_link, url=link_url))
+                TextNode(text=alt_text, text_type=text_type_link, url=link_url)
+            )
             original_text = sections[1]
         if original_text != "":
             new_nodes.append(TextNode(original_text, text_type_text))
@@ -109,11 +116,20 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
 def text_to_textnodes(text: str) -> list[TextNode]:
     new_nodes = [TextNode(text=text, text_type=text_type_text)]
     new_nodes = split_nodes_delimiter(
-        old_nodes=new_nodes, delimiter="**", text_type=text_type_bold)
+        old_nodes=new_nodes, delimiter="**", text_type=text_type_bold
+    )
     new_nodes = split_nodes_delimiter(
-        old_nodes=new_nodes, delimiter="*", text_type=text_type_italic)
+        old_nodes=new_nodes, delimiter="__", text_type=text_type_bold
+    )
     new_nodes = split_nodes_delimiter(
-        old_nodes=new_nodes, delimiter="`", text_type=text_type_code)
+        old_nodes=new_nodes, delimiter="*", text_type=text_type_italic
+    )
+    new_nodes = split_nodes_delimiter(
+        old_nodes=new_nodes, delimiter="_", text_type=text_type_italic
+    )
+    new_nodes = split_nodes_delimiter(
+        old_nodes=new_nodes, delimiter="`", text_type=text_type_code
+    )
     new_nodes = split_nodes_link(old_nodes=new_nodes)
     new_nodes = split_nodes_image(old_nodes=new_nodes)
     return new_nodes

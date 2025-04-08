@@ -33,8 +33,8 @@ def copy_static(STATIC_BASE_DIR: str, PUBLIC_BASE_DIR: str):
 
 def main():
     # Get the arguments passed on start
-    basepath = sys.argv[0]
-    if basepath == "":
+    basepath = sys.argv[-1]
+    if basepath == "" or len(sys.argv) < 2:
         basepath = "/"
 
     buildDir = "docs"
